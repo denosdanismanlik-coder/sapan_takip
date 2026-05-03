@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "103359671597",
+    "project_id": "sapan-takip",
+    "storage_bucket": "sapan-takip.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:103359671597:android:a8b5a6a8d34437d1e037a4",
+        "android_client_info": {
+          "package_name": "com.example.sapan_takip"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDp9opwD0iT2V7M3FKl6tgN0A5JMeyNlis"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
