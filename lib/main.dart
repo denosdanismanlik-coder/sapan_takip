@@ -10,17 +10,7 @@ import 'package:image_picker/image_picker.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-
-  await Firebase.initializeApp(
-    options: const FirebaseOptions(
-      apiKey: "AIzaSyAQqeTZ5RhThzaj45Nzu9CImqlZRNIUvZY",
-      appId: "1:103359671597:web:0b62a5da61041550e037a4",
-      messagingSenderId: "103359671597",
-      projectId: "sapan-takip",
-      storageBucket: "sapan-takip.firebasestorage.app",
-    ),
-  );
-
+  await Firebase.initializeApp();
   runApp(MyApp());
 }
 
