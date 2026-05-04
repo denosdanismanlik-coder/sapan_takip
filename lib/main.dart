@@ -761,30 +761,55 @@ class _SapanDetayState extends State<SapanDetay> {
   String? secilenFotoAdi;
   final ImagePicker _picker = ImagePicker();
 
-  Future<void> fotoSec() async {
-    try {
-      final XFile? foto = await _picker.pickImage(
-        source: ImageSource.gallery,
-        imageQuality: 70,
-        maxWidth: 1600,
+ Future<void> fotoSec() async {
+  final secim = await showModalBottomSheet<ImageSource>(
+    context: context,
+    builder: (context) {
+      return SafeArea(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ListTile(
+              leading: const Icon(Icons.camera_alt),
+              title: const Text("Fotoğraf Çek"),
+              onTap: () => Navigator.pop(context, ImageSource.camera),
+            ),
+            ListTile(
+              leading: const Icon(Icons.photo),
+              title: const Text("Galeriden Seç"),
+              onTap: () => Navigator.pop(context, ImageSource.gallery),
+            ),
+          ],
+        ),
       );
+    },
+  );
 
-      if (foto == null) return;
+  if (secim == null) return;
 
-      final bytes = await foto.readAsBytes();
-      if (!mounted) return;
+  try {
+    final XFile? foto = await _picker.pickImage(
+      source: secim,
+      imageQuality: 70,
+      maxWidth: 1600,
+    );
 
-      setState(() {
-        secilenFotoBytes = bytes;
-        secilenFotoAdi = foto.name;
-      });
-    } catch (e) {
-      if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Fotoğraf seçilemedi: $e")),
-      );
-    }
+    if (foto == null) return;
+
+    final bytes = await foto.readAsBytes();
+    if (!mounted) return;
+
+    setState(() {
+      secilenFotoBytes = bytes;
+      secilenFotoAdi = foto.name;
+    });
+  } catch (e) {
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text("Fotoğraf seçilemedi: $e")),
+    );
   }
+}
 
   Future<void> bilgileriGuncelle(Map<String, dynamic> mevcutData) async {
     final plaka = TextEditingController(text: mevcutData['plaka'] ?? "");
