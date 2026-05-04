@@ -106,7 +106,11 @@ class MyApp extends StatelessWidget {
           ),
         ),
       ),
-      home: AuthCheck(),
+      home: Scaffold(
+  body: Center(
+    child: Text("APP AÇILDI"),
+  ),
+),
     );
   }
 }
