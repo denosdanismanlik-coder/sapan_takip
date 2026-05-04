@@ -10,8 +10,22 @@ import 'package:image_picker/image_picker.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp();
-  runApp(MyApp());
+
+  try {
+    await Firebase.initializeApp();
+    runApp(MyApp());
+  } catch (e) {
+    runApp(MaterialApp(
+      home: Scaffold(
+        body: Center(
+          child: Text(
+            "Firebase başlatma hatası:\n$e",
+            textAlign: TextAlign.center,
+          ),
+        ),
+      ),
+    ));
+  }
 }
 
 const Color anaRenk = Color(0xFF1E3A8A);
