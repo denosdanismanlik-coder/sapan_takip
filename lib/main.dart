@@ -243,10 +243,6 @@ class LoginPage extends StatelessWidget {
                     child: const Text("Giriş Yap"),
                   ),
                 ),
-                TextButton(
-                  onPressed: () => kayit(context),
-                  child: const Text("Kayıt Ol"),
-                ),
               ],
             ),
           ),
