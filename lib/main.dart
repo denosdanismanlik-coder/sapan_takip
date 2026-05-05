@@ -121,13 +121,11 @@ class MyApp extends StatelessWidget {
 }
 
 class AuthCheck extends StatelessWidget {
-  Future<bool> kullaniciAktifMi(User user) async {
-    final doc = await FirebaseFirestore.instance
+  Future<DocumentSnapshot<Map<String, dynamic>>> kullaniciDoc(User user) {
+    return FirebaseFirestore.instance
         .collection('kullanicilar')
         .doc(user.uid)
         .get();
-
-    return doc.exists && doc.data()?['aktif'] == true;
   }
 
   @override
@@ -139,27 +137,55 @@ class AuthCheck extends StatelessWidget {
 
         final user = snapshot.data!;
 
-        return FutureBuilder<bool>(
-          future: kullaniciAktifMi(user),
-          builder: (context, aktifSnap) {
-            if (!aktifSnap.hasData) {
+        return FutureBuilder<DocumentSnapshot<Map<String, dynamic>>>(
+          future: kullaniciDoc(user),
+          builder: (context, userDocSnap) {
+            if (userDocSnap.connectionState == ConnectionState.waiting) {
               return const Scaffold(
                 body: Center(child: CircularProgressIndicator()),
               );
             }
 
-            if (aktifSnap.data == true) {
+            if (userDocSnap.hasError) {
+              return Scaffold(
+                body: Center(
+                  child: Text(
+                    "Yetki kontrol hatası:\n${userDocSnap.error}",
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+              );
+            }
+
+            final doc = userDocSnap.data;
+
+            if (doc == null || !doc.exists) {
+              return Scaffold(
+                body: Center(
+                  child: Padding(
+                    padding: const EdgeInsets.all(24),
+                    child: Text(
+                      "Bu kullanıcı Firestore'da kayıtlı değil.\n\nUID:\n${user.uid}\n\nEmail:\n${user.email}",
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                ),
+              );
+            }
+
+            final data = doc.data();
+            final aktif = data?['aktif'] == true;
+
+            if (aktif) {
               return SapanListesi();
             }
 
-            FirebaseAuth.instance.signOut();
-
-            return const Scaffold(
+            return Scaffold(
               body: Center(
                 child: Padding(
-                  padding: EdgeInsets.all(24),
+                  padding: const EdgeInsets.all(24),
                   child: Text(
-                    "Bu kullanıcı aktif değil veya yetkili değil.\nLütfen yöneticinizle iletişime geçin.",
+                    "Bu kullanıcı aktif değil.\n\nUID:\n${user.uid}\n\nEmail:\n${user.email}",
                     textAlign: TextAlign.center,
                   ),
                 ),
