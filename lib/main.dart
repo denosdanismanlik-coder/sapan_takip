@@ -121,13 +121,52 @@ class MyApp extends StatelessWidget {
 }
 
 class AuthCheck extends StatelessWidget {
+  Future<bool> kullaniciAktifMi(User user) async {
+    final doc = await FirebaseFirestore.instance
+        .collection('kullanicilar')
+        .doc(user.uid)
+        .get();
+
+    return doc.exists && doc.data()?['aktif'] == true;
+  }
+
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<User?>(
       stream: FirebaseAuth.instance.authStateChanges(),
       builder: (context, snapshot) {
-        if (snapshot.hasData) return SapanListesi();
-        return LoginPage();
+        if (!snapshot.hasData) return LoginPage();
+
+        final user = snapshot.data!;
+
+        return FutureBuilder<bool>(
+          future: kullaniciAktifMi(user),
+          builder: (context, aktifSnap) {
+            if (!aktifSnap.hasData) {
+              return const Scaffold(
+                body: Center(child: CircularProgressIndicator()),
+              );
+            }
+
+            if (aktifSnap.data == true) {
+              return SapanListesi();
+            }
+
+            FirebaseAuth.instance.signOut();
+
+            return const Scaffold(
+              body: Center(
+                child: Padding(
+                  padding: EdgeInsets.all(24),
+                  child: Text(
+                    "Bu kullanıcı aktif değil veya yetkili değil.\nLütfen yöneticinizle iletişime geçin.",
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+              ),
+            );
+          },
+        );
       },
     );
   }
